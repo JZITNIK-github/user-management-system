@@ -1,0 +1,23 @@
+[
+  {
+    "username": "admin",
+    "password": "$2b$10$Wzt1tWUzUkXkvFtwhRL.l.fs8vYgEkBbxnzQj2OMTR4787LaCDDtu",
+    "admin": true
+  },
+  {
+    "username": "pepa",
+    "password": "$2b$10$NxD7bmamaCqoNlQ6PmUf5OuDDWn3RKt0t7jBbNCAG5E9tnZGsVmyy",
+    "pages": [
+      { "url": "http://localhost:1880/ui/#!/0", "name": "Nevím 0" },
+      { "url": "http://localhost:1880/ui/#!/1", "name": "Nevím 1" }
+    ]
+  },
+  {
+    "username": "nevím",
+    "password": "$2b$10$hPCDzOrhlN0jYdv38zw0S.qZAFWawSnuG1AFMp7TAMgBFoekC1Z9G",
+    "pages": [
+      { "url": "http://localhost:1880/ui/#!/0", "name": "nekdo 0" },
+      { "name": "nevim", "url": "https://google.com" }
+    ]
+  }
+]

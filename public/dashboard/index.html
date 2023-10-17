@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <script>
+        if (!localStorage.getItem("token")) {
+            window.location.replace("..")
+        }
+        function change(x) {
+            document.querySelector("iframe").src = x
+        }
+        function logout() {
+            fetch("/api/logout/",
+            {
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({token: localStorage.getItem("token")})
+            })
+            .then(res=>res.json())
+            .then(res=> {
+                localStorage.removeItem("token")
+                window.location.replace("..")
+            })
+            .catch(function(res){ console.log(res) })
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div style="position: absolute;right: 10px;" onclick="logout()">Odhlásit se</div>
+    </header>
+    <iframe src="about:blank" frameborder="0"></iframe>
+    <script>
+        fetch("/api/getPages/",
+        {
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({token: localStorage.getItem("token")})
+        })
+        .then(res=>res.json())
+        .then(res=> {
+            if (res["data"] == "error") {
+                localStorage.removeItem("token")
+                window.location.replace("..")
+            }
+            else {
+                const pages = res["data"]
+                for (const page of pages) {
+                    var div = document.createElement("div")
+                    div.textContent = page["name"]
+                    div.setAttribute("onclick", "change('"+page.url+"')")
+                    document.querySelector("header").appendChild(div)
+                }
+            }
+        })
+        .catch(function(res){ console.log(res) })
+    </script>
+</body>
+</html>
