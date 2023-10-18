@@ -192,8 +192,8 @@
         function addWebsite(el) {
             const username = el.getAttribute("username")
             const name = prompt("Zadejte jméno stránky: ")
-            const url = prompt("Zadejte url stránky. Uživatel nesmí mít více stránek se tejnou url!")
-            if (name && prompt) {
+            const url = prompt("Zadejte url stránky. Uživatel nesmí mít více stránek se stejnou url!")
+            if (name && url) {
                 fetch("/api/admin/addWebsite/",
                 {
                     headers: {

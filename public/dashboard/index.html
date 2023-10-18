@@ -29,8 +29,12 @@
                 }
             })
         }
-        function change(x) {
+        function change(x, el) {
             document.querySelector("iframe").src = x
+            el.parentElement.querySelectorAll("div").forEach(element => {
+                element.style.color = "white"
+            });
+            el.style.color = "gray"
         }
         function logout() {
             fetch("/api/logout/",
@@ -77,7 +81,7 @@
                 for (const page of pages) {
                     var div = document.createElement("div")
                     div.textContent = page["name"]
-                    div.setAttribute("onclick", "change('"+page.url+"')")
+                    div.setAttribute("onclick", "change('"+page.url+"', this)")
                     document.querySelector("header").appendChild(div)
                 }
             }
