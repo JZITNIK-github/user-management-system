@@ -1,1 +1,23 @@
-[{"username":"admin","password":"","admin":true}]
+[
+  {
+    "username": "admin",
+    "password": "$2b$10$B54IKNKT8jf85wIV4cSTsOW94OZjJQ0oryMP.0s6.wwcGIAZ17Upi",
+    "admin": true
+  },
+  {
+    "username": "pepa",
+    "password": "$2b$10$.3X5ewqBmodWVfE0PGaS2.siE0oOl4jcPJ8k4IJ/zX5SYdHuX54X6",
+    "pages": [
+      { "name": "Jedna", "url": "http://localhost:1880/ui/#!/0" },
+      { "name": "Tři", "url": "http://localhost:1880/ui/#!/2" }
+    ]
+  },
+  {
+    "username": "nekdo",
+    "password": "$2b$10$U/pDVo7F/b3e9oWyyY.Q9ery.i/bekPy1.8cdJ3aF36oVTX4h45r6",
+    "pages": [
+      { "name": "Dva", "url": "http://localhost:1880/ui/#!/1" },
+      { "name": "Volny", "url": "https://volny.cz" }
+    ]
+  }
+]

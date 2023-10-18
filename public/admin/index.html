@@ -93,6 +93,7 @@
                     <p>Admin: <strong><span>${user["admin"] == true ? "ANO" : "NE"}</span></strong></p>
                     <h3>Ovládání</h3>
                     <button onclick="resetPassword(this.parentElement)">Resetovat heslo</button>
+                    <button onclick="logoutAll(this.parentElement)">Ohlásit ze všech zařízení</button>
                     ${removeButton}
                     ${contentWebsites}`
                     document.querySelector(".usersList").appendChild(div)
@@ -102,6 +103,27 @@
                 window.location.replace("..")
             }
         })
+        function logoutAll(el) {
+            const username = el.getAttribute("username")
+            fetch("/api/admin/logoutUser/",
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({token: localStorage.getItem("token"), username: username})
+            })
+            .then(rs=>rs.json())
+            .then(rs=> {
+                if (rs["response"] == "success") {
+                    alert("Uživatel byl odhlášen ze všech zařízení!")
+                }
+                else {
+                    alert("Nepodařilo se mi odhlásit uživatele!")
+                }
+            })
+        }
         function resetPassword(el) {
             const username = el.getAttribute("username")
             fetch("/api/admin/resetPassword/",
@@ -115,7 +137,7 @@
             })
             .then(rs=>rs.json())
             .then(rs=> {
-                if (rs["reponse"] == "success") {
+                if (rs["response"] == "success") {
                     alert("Heslo bylo resetováno! Při příštím přihlášení bude uživatel vyzván pro nastavení nového hesla.")
                 }
                 else {
@@ -141,7 +163,7 @@
             })
             .then(rs=>rs.json())
             .then(rs=> {
-                if (rs["reponse"] == "success") {
+                if (rs["response"] == "success") {
                     alert("Uživatel byl smazán")
                 }
                 else {

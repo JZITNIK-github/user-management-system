@@ -9,6 +9,26 @@
         if (!localStorage.getItem("token")) {
             window.location.replace("..")
         }
+        else {
+            fetch("/api/admin/isAdmin/",
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({token: localStorage.getItem("token")})
+            })
+            .then(rs=>rs.json())
+            .then(rs=> {
+                if (rs["response"] == "wrong") {
+                    localStorage.removeItem("token")
+                }
+                if (rs["response"] == true) {
+                    window.location.replace("../admin")
+                }
+            })
+        }
         function change(x) {
             document.querySelector("iframe").src = x
         }

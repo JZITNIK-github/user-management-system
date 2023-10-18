@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const fs = require("fs");
 const { port } = JSON.parse(fs.readFileSync("./config.json", { encoding: "utf-8" }));
+const path = require('path');
 
 function isAdmin(token, callback) {
     fs.readFile("./tokens.json", "utf-8", (err, data) => {
@@ -168,16 +169,16 @@ app.post("/api/setPassword", (req, res) => {
                                 res.sendStatus(500); 
                                 return;
                             }
-                            res.status(200).json({"reponse": "success"})
+                            res.status(200).json({"response": "success"})
                         })
                         return
                     }
                 }
-                res.status(400).json({"reponse": "wrongToken"})
+                res.status(400).json({"response": "wrongToken"})
             })
         }
         else {
-            res.status(400).json({"reponse": "wrongToken"})
+            res.status(400).json({"response": "wrongToken"})
         }
     })
 })
@@ -309,7 +310,7 @@ app.post("/api/admin/resetPassword", (req, res) => {
                                 res.sendStatus(500); 
                                 return;
                             }
-                            res.status(200).json({"reponse": "success"})
+                            res.status(200).json({"response": "success"})
                         })
                         return;
                     }
@@ -359,7 +360,6 @@ app.post("/api/admin/removeAccount", (req, res) => {
                                 for (const token of Object.keys(dat)) {
                                     if (dat[token] == username) {
                                         delete dat[token]
-                                        break;
                                     }
                                 }
 
@@ -369,7 +369,7 @@ app.post("/api/admin/removeAccount", (req, res) => {
                                         res.sendStatus(500); 
                                         return;
                                     }
-                                    res.status(200).json({"reponse": "success"})
+                                    res.status(200).json({"response": "success"})
                                 })
                             })
                         })
@@ -503,5 +503,48 @@ app.post("/api/admin/addUser", (req, res) => {
 })
 
 
+app.post("/api/admin/logoutUser", (req, res) => {
+    const {token, username} = req.body
+    isAdmin(token, (response) => {
+        if (response == "error") {
+            console.error(err);
+            res.sendStatus(500); 
+        }
+        else if (response == "wrong") {
+            res.status(400).json({response: "wrong"})
+        }
+        else {
+            fs.readFile("./tokens.json", "utf-8", (err, tokens) => {
+                if (err) {
+                  console.error(err);
+                  res.sendStatus(500);
+                  return;
+                }
+                var dat = JSON.parse(tokens);
+              
+                for (const token of Object.keys(dat)) {
+                  if (dat[token] == username) {
+                    delete dat[token];
+                  }
+                }
+              
+                fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+                  if (err) {
+                    console.error(err);
+                    res.sendStatus(500);
+                    return;
+                  }
+                  res.status(200).json({ response: "success" });
+                });
+            });
+        }
+    })
+})
+
+
+app.get('*', function(req, res){
+    const filePath = path.join(__dirname, 'public', '404.html');
+    res.sendFile(filePath);
+});
 
 app.listen(port, () => console.log(`Server běží na portu ${port}!`));
