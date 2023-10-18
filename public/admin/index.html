@@ -220,26 +220,31 @@
 
         function addUser() {
             const username = prompt("Zadejte uživatelské jméno:")
-            fetch("/api/admin/addUser/",
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify({token: localStorage.getItem("token"), username: username})
-            })
-            .then(res=>res.json())
-            .then(res=> {
-                if (res["response"] == "success") {
-                    alert("Uživatel byl přidán! Při provním přihlášení bude vyzván k nastavení hesla. Prozatím se přihlašuje bez hesla.")
-                }
-                else {
-                    alert("Nepovedlo se přidat uživatele!")
-                }
-                window.location.reload()
-            })
-            .catch(function(res){ console.log(res) })
+            if (username) {
+                fetch("/api/admin/addUser/",
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: "POST",
+                    body: JSON.stringify({token: localStorage.getItem("token"), username: username})
+                })
+                .then(res=>res.json())
+                .then(res=> {
+                    if (res["response"] == "success") {
+                        alert("Uživatel byl přidán! Při provním přihlášení bude vyzván k nastavení hesla. Prozatím se přihlašuje bez hesla.")
+                    }
+                    else if (res["response"] == "duplicate") {
+                        alert("Uživatel se stejným uživatelským jménem již existuje!")
+                    }
+                    else {
+                        alert("Nepovedlo se přidat uživatele!")
+                    }
+                    window.location.reload()
+                })
+                .catch(function(res){ console.log(res) })
+            }
         }
     </script>
 </body>

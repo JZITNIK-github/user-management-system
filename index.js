@@ -355,7 +355,6 @@ app.post("/api/admin/removeAccount", (req, res) => {
                                     return;
                                 }
                                 var dat = JSON.parse(tokens)
-                                console.log(dat)
 
                                 for (const token of Object.keys(dat)) {
                                     if (dat[token] == username) {
@@ -480,6 +479,14 @@ app.post("/api/admin/addUser", (req, res) => {
                     return;
                 }
                 var users = JSON.parse(data)
+                for (const user of users) {
+                    if (user.username == username) {
+                        res.status(400).json({response: "duplicate"})
+                        return
+                    }
+                }
+
+
                 users.push({username: username, password: "", pages: []})
 
                 fs.writeFile("./users.json", JSON.stringify(users), (err) => {
