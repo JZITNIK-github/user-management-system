@@ -1,58 +1,25 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const fs = require("fs");
 const { port } = JSON.parse(fs.readFileSync("./config.json", { encoding: "utf-8" }));
 const path = require('path');
-
-function isAdmin(token, callback) {
-    fs.readFile("./tokens.json", "utf-8", (err, data) => {
-        if (err) {
-            callback("error")
-            return;
-        }
-        const dat = JSON.parse(data)
-        if (Object.keys(dat).includes(token)) {
-            const username = dat[token]
-            fs.readFile("./users.json", "utf-8", (err, data) => {
-                if (err) {
-                    callback("error")
-                    return;
-                }
-                const user = JSON.parse(data)
-                for (const usr of user) {
-                    if (usr.username == username) {
-                        if (usr.admin) {
-                            callback(true)
-                        }
-                        else {
-                            callback(false)
-                        }
-                        return
-                    }
-                }
-                callback("wrong")
-            })
-        }
-        else {
-            callback("wrong")
-        }
-    })
+const isAdmin = require("./scripts/isadmin")
+const generateRandomToken = require("./scripts/randomtoken")
+const paths = {
+    token: "./data/tokens.json",
+    users: "./data/users.json",
+    notfound: path.join(__dirname, 'public', '404.html')
 }
 
-
-const generateRandomToken = (length) => {
-    return crypto.randomBytes(length).toString('hex');
-};
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    fs.readFile('./users.json', 'utf8', async function (err, data) {
+    fs.readFile(paths.users, 'utf8', async function (err, data) {
         if (err) {
             console.error(err);
             res.sendStatus(500); 
@@ -62,7 +29,7 @@ app.post("/api/login", (req, res) => {
         for (const user of final) {
             if (user.username === username) {
                 if (user.password == "") {
-                    fs.readFile("./tokens.json", "utf-8", (err, data) => {
+                    fs.readFile(paths.token, "utf-8", (err, data) => {
                         if (err) {
                             console.error(err);
                             res.sendStatus(500); 
@@ -80,7 +47,7 @@ app.post("/api/login", (req, res) => {
     
                         dat[token] = username
     
-                        fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+                        fs.writeFile(paths.token, JSON.stringify(dat), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -96,7 +63,7 @@ app.post("/api/login", (req, res) => {
                     };
                     const test = await verifyHashedPassword(password, user.password)
                     if (test) {
-                        fs.readFile("./tokens.json", "utf-8", (err, data) => {
+                        fs.readFile(paths.token, "utf-8", (err, data) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -114,7 +81,7 @@ app.post("/api/login", (req, res) => {
         
                             dat[token] = username
         
-                            fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+                            fs.writeFile(paths.token, JSON.stringify(dat), (err) => {
                                 if (err) {
                                     console.error(err);
                                     res.sendStatus(500); 
@@ -137,7 +104,7 @@ app.post("/api/login", (req, res) => {
 
 app.post("/api/setPassword", (req, res) => {
     const {token, password} = req.body
-    fs.readFile("./tokens.json", "utf-8", (err, data) => {
+    fs.readFile(paths.token, "utf-8", (err, data) => {
         if (err) {
             console.error(err);
             res.sendStatus(500); 
@@ -146,7 +113,7 @@ app.post("/api/setPassword", (req, res) => {
         const dat = JSON.parse(data)
         if (Object.keys(dat).includes(token)) {
             const username = dat[token]
-            fs.readFile("./users.json", "utf-8", async (err, data) => {
+            fs.readFile(paths.users, "utf-8", async (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -163,7 +130,7 @@ app.post("/api/setPassword", (req, res) => {
                     if (user[i].username == username) {
                         const hashedPassword = await generateHashedPassword(password);
                         user[i].password = hashedPassword
-                        fs.writeFile("./users.json", JSON.stringify(user), (err) => {
+                        fs.writeFile(paths.users, JSON.stringify(user), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -185,7 +152,7 @@ app.post("/api/setPassword", (req, res) => {
 
 app.post("/api/getPages", (req, res) => {
     const {token} = req.body
-    fs.readFile("./tokens.json", "utf-8", (err, data) => {
+    fs.readFile(paths.token, "utf-8", (err, data) => {
         if (err) {
             console.error(err);
             res.sendStatus(500); 
@@ -194,7 +161,7 @@ app.post("/api/getPages", (req, res) => {
         const dat = JSON.parse(data)
         if (Object.keys(dat).includes(token)) {
             const username = dat[token]
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -220,7 +187,7 @@ app.post("/api/getPages", (req, res) => {
 
 app.post("/api/logout", (req, res) => {
     const {token} = req.body
-    fs.readFile("./tokens.json", "utf-8", (err, data) => {
+    fs.readFile(paths.token, "utf-8", (err, data) => {
         if (err) {
             console.error(err);
             res.sendStatus(500); 
@@ -229,7 +196,7 @@ app.post("/api/logout", (req, res) => {
         const dat = JSON.parse(data)
         if (Object.keys(dat).includes(token)) {
             delete dat[token]
-            fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+            fs.writeFile(paths.token, JSON.stringify(dat), (err) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -271,7 +238,7 @@ app.post("/api/admin/getAllUsers", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -294,7 +261,7 @@ app.post("/api/admin/resetPassword", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -304,7 +271,7 @@ app.post("/api/admin/resetPassword", (req, res) => {
                 for (var i = 0; i < users.length; i++) {
                     if (users[i].username === username) {
                         users[i].password = ""
-                        fs.writeFile("./users.json", JSON.stringify(users), (err) => {
+                        fs.writeFile(paths.users, JSON.stringify(users), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -332,7 +299,7 @@ app.post("/api/admin/removeAccount", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -342,14 +309,14 @@ app.post("/api/admin/removeAccount", (req, res) => {
                 for (var i = 0; i < users.length; i++) {
                     if (users[i].username === username) {
                         users.splice(i, 1)
-                        fs.writeFile("./users.json", JSON.stringify(users), (err) => {
+                        fs.writeFile(paths.users, JSON.stringify(users), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
                                 return;
                             }
 
-                            fs.readFile("./tokens.json", "utf-8", (err, tokens) => {
+                            fs.readFile(paths.token, "utf-8", (err, tokens) => {
                                 if (err) {
                                     console.error(err);
                                     res.sendStatus(500); 
@@ -363,7 +330,7 @@ app.post("/api/admin/removeAccount", (req, res) => {
                                     }
                                 }
 
-                                fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+                                fs.writeFile(paths.token, JSON.stringify(dat), (err) => {
                                     if (err) {
                                         console.error(err);
                                         res.sendStatus(500); 
@@ -391,7 +358,7 @@ app.post("/api/admin/addWebsite", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -401,7 +368,7 @@ app.post("/api/admin/addWebsite", (req, res) => {
                 for (var i = 0; i < users.length; i++) {
                     if (users[i].username === username) {
                         users[i].pages.push(website)
-                        fs.writeFile("./users.json", JSON.stringify(users), (err) => {
+                        fs.writeFile(paths.users, JSON.stringify(users), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -428,7 +395,7 @@ app.post("/api/admin/removeWebsite", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -445,7 +412,7 @@ app.post("/api/admin/removeWebsite", (req, res) => {
                             }
                         }
 
-                        fs.writeFile("./users.json", JSON.stringify(users), (err) => {
+                        fs.writeFile(paths.users, JSON.stringify(users), (err) => {
                             if (err) {
                                 console.error(err);
                                 res.sendStatus(500); 
@@ -472,7 +439,7 @@ app.post("/api/admin/addUser", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./users.json", "utf-8", (err, data) => {
+            fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
                     res.sendStatus(500); 
@@ -489,7 +456,7 @@ app.post("/api/admin/addUser", (req, res) => {
 
                 users.push({username: username, password: "", pages: []})
 
-                fs.writeFile("./users.json", JSON.stringify(users), (err) => {
+                fs.writeFile(paths.users, JSON.stringify(users), (err) => {
                     if (err) {
                         console.error(err);
                         res.sendStatus(500); 
@@ -514,7 +481,7 @@ app.post("/api/admin/logoutUser", (req, res) => {
             res.status(400).json({response: "wrong"})
         }
         else {
-            fs.readFile("./tokens.json", "utf-8", (err, tokens) => {
+            fs.readFile(paths.token, "utf-8", (err, tokens) => {
                 if (err) {
                   console.error(err);
                   res.sendStatus(500);
@@ -528,7 +495,7 @@ app.post("/api/admin/logoutUser", (req, res) => {
                   }
                 }
               
-                fs.writeFile("./tokens.json", JSON.stringify(dat), (err) => {
+                fs.writeFile(paths.token, JSON.stringify(dat), (err) => {
                   if (err) {
                     console.error(err);
                     res.sendStatus(500);
@@ -543,8 +510,7 @@ app.post("/api/admin/logoutUser", (req, res) => {
 
 
 app.get('*', function(req, res){
-    const filePath = path.join(__dirname, 'public', '404.html');
-    res.sendFile(filePath);
+    res.sendFile(paths.notfound);
 });
 
 app.listen(port, () => console.log(`Server běží na portu ${port}!`));

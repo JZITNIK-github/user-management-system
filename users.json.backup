@@ -1,23 +1,32 @@
 [
   {
     "username": "admin",
-    "password": "$2b$10$Wzt1tWUzUkXkvFtwhRL.l.fs8vYgEkBbxnzQj2OMTR4787LaCDDtu",
+    "password": "$2b$10$3hhokBbZl2DfoaNcF1ExruizMY27znk6r1PMqm6vFA25x2aqNMpHG",
     "admin": true
   },
   {
     "username": "pepa",
-    "password": "$2b$10$NxD7bmamaCqoNlQ6PmUf5OuDDWn3RKt0t7jBbNCAG5E9tnZGsVmyy",
+    "password": "$2b$10$2pCHYEt0HSlBGdNOaqEVY.lqrbPI9cS1LvBvSGylJNJ9M8oVmWd9K",
     "pages": [
-      { "url": "http://localhost:1880/ui/#!/0", "name": "Nevím 0" },
-      { "url": "http://localhost:1880/ui/#!/1", "name": "Nevím 1" }
+      { "name": "První", "url": "http://localhost:1880/ui/#!/0" },
+      { "name": "Třetí", "url": "http://localhost:1880/ui/#!/2" }
     ]
   },
   {
-    "username": "nevím",
-    "password": "$2b$10$hPCDzOrhlN0jYdv38zw0S.qZAFWawSnuG1AFMp7TAMgBFoekC1Z9G",
+    "username": "jirka",
+    "password": "$2b$10$pbs7qdkCdIN6lvHGTKsaa.TDv6jLjSdG3J2.Y4JEHqv7kC.P5y9wa",
     "pages": [
-      { "url": "http://localhost:1880/ui/#!/0", "name": "nekdo 0" },
-      { "name": "nevim", "url": "https://google.com" }
+      { "name": "Druhá", "url": "http://localhost:1880/ui/#!/1" },
+      { "name": "Třetí", "url": "http://localhost:1880/ui/#!/2" }
+    ]
+  },
+  {
+    "username": "franta",
+    "password": "$2b$10$dzCFkOEmS/PvbExO8zsXFeQvh6YJWYYNn1sn.ZmJ8uV2jsfpYilJW",
+    "pages": [
+      { "name": "První", "url": "http://localhost:1880/ui/#!/0" },
+      { "name": "Druhá", "url": "http://localhost:1880/ui/#!/1" },
+      { "name": "Třetí", "url": "http://localhost:1880/ui/#!/2" }
     ]
   }
 ]

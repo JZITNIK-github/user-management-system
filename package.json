@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "factory": "node factory.js"
+    "factory": "node scripts/factory"
   },
   "keywords": [],
   "author": "",

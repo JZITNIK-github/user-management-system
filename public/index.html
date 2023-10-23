@@ -1,17 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Přihlášení</title>
     <link rel="stylesheet" href="assets/css/main.css">
-    <script>
-        if (localStorage.getItem("token")) {
-            window.location.replace("/dashboard")
-        }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="assets/lib/jquery-3.7.1.min.js"></script>
+    <script src="assets/lib/jquery-ui-1.13.2.min.js" ></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css">
 </head>
 <body>
@@ -33,77 +28,6 @@
     <div id="wrongpass" title="Chyba!" style="display: none;">
         <p>Uživatelské jméno nebo heslo je nesprávné!</p>
     </div>
-    <script>
-        document.querySelector(".submit").addEventListener("click", () => {
-            const username = document.querySelector(".username").value
-            const password = document.querySelector(".password").value
-            fetch("/api/login/",
-            {
-                headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify({username: username, password: password})
-            })
-            .then(res=>res.json())
-            .then(res=> {
-                if (res["token"] == "none") {
-                    $( "#wrongpass" ).dialog({buttons: {"OK": function() {$(this).dialog("close")}}});
-                    document.querySelector(".password").value = ""
-                }
-                else {
-                    if (res["changePass"]) {
-                        $("#passprompt").dialog({
-                            autoOpen: true,
-                            modal: true,
-                            buttons: {
-                                "Odeslat": function() {
-                                var password = $("#password").val();
-                                    if (password != "") { // Replace "yourPassword" with the actual password
-                                        $(this).dialog("close");
-                                        fetch("/api/setPassword/",
-                                        {
-                                            headers: {
-                                            'Accept': 'application/json',
-                                            'Content-Type': 'application/json'
-                                            },
-                                            method: "POST",
-                                            body: JSON.stringify({token: res.token, password: password})
-                                        })
-                                        .then(rs=>rs.json())
-                                        .then(rs=> {
-                                            if (!rs["response"] == "success") {
-                                                alert("Heslo se nepovedlo nastavit! Budete požádání o nastavení nového hesla při příštím přihlášení.")
-                                            }
-                                            localStorage.setItem("token", res.token)
-                                            if (res.admin) {
-                                                window.location.replace("/admin")
-                                            }
-                                            else {
-                                                window.location.replace("/dashboard")
-                                            }
-                                        })
-                                    } else {
-                                        $( "#alert" ).dialog({buttons: {"OK": function() {$(this).dialog("close")}}});
-                                    }
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        localStorage.setItem("token", res.token)
-                        if (res.admin) {
-                            window.location.replace("/admin")
-                        }
-                        else {
-                            window.location.replace("/dashboard")
-                        }
-                    }
-                }
-            })
-            .catch(function(res){ console.log(res) })
-        })
-    </script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
