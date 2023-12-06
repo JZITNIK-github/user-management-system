@@ -237,7 +237,7 @@ app.post("/api/admin/getAllUsers", (req, res) => {
         else if (response == "wrong") {
             res.status(400).json({response: "wrong"})
         }
-        else {
+        else if (response === true) {
             fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
@@ -246,6 +246,9 @@ app.post("/api/admin/getAllUsers", (req, res) => {
                 }
                 res.status(200).json({response: "success", data: data})
             })
+        }
+        else {
+            res.status(300).json({response: "no-access"})
         }
     })
 })
@@ -260,7 +263,7 @@ app.post("/api/admin/resetPassword", (req, res) => {
         else if (response == "wrong") {
             res.status(400).json({response: "wrong"})
         }
-        else {
+        else if (response === true) {
             fs.readFile(paths.users, "utf-8", (err, data) => {
                 if (err) {
                     console.error(err);
@@ -283,6 +286,9 @@ app.post("/api/admin/resetPassword", (req, res) => {
                     }
                 }
             })
+        }
+        else {
+            res.status(300).json({response: "no-access"})
         }
     })
 })

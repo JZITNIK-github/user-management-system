@@ -72,7 +72,7 @@ fetch("/api/admin/getAllUsers/",
             <p>Admin: <strong><span>${user["admin"] == true ? "ANO" : "NE"}</span></strong></p>
             <h3>Ovládání</h3>
             <button onclick="resetPassword(this.parentElement)">Resetovat heslo</button>
-            <button onclick="logoutAll(this.parentElement)">Ohlásit ze všech zařízení</button>
+            <button onclick="logoutAll(this.parentElement)">Odhlásit ze všech zařízení</button>
             ${removeButton}
             ${contentWebsites}`
             document.querySelector(".usersList").appendChild(div)

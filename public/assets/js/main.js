@@ -20,6 +20,7 @@ document.querySelector(".submit").addEventListener("click", () => {
             document.querySelector(".password").value = ""
         }
         else {
+            localStorage.setItem("token", res.token)
             if (res["changePass"]) {
                 $("#passprompt").dialog({
                     autoOpen: true,
@@ -43,7 +44,7 @@ document.querySelector(".submit").addEventListener("click", () => {
                                     if (!rs["response"] == "success") {
                                         alert("Heslo se nepovedlo nastavit! Budete požádání o nastavení nového hesla při příštím přihlášení.")
                                     }
-                                    localStorage.setItem("token", res.token)
+
                                     if (res.admin) {
                                         window.location.replace("/admin")
                                     }
